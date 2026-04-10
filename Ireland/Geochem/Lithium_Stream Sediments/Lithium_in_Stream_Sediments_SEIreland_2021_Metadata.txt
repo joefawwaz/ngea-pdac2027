@@ -1,0 +1,53 @@
+Title		Lithium in stream sediments in southeast Ireland (G2) ITM
+
+Purpose		
+Stream sediment samples were collected in the southeast of Ireland from 1986 to 1990. This was part of a baseline geochemical survey, which measured the amount and type of chemicals in the stream sediments. The samples were tested for lithium and 37 other chemicals. 
+Lithium is very important as it is used in making batteries for electric cars. Because of this, the original lithium data have been compiled into a new database.
+
+Version		1.0
+
+Summary
+Almost 2,000 stream sediment samples were collected in southeast Ireland from 1986 to 1990. They were analysed for 38 elements. The data showed the change in chemistry of the sediments and bedrock across the region. Most of the samples were analysed again in 2014-2015 as part of the Tellus programme. The new analyses were generally of higher quality. However, lithium was not included in the new analyses. 
+
+Lithium is a “critical” element in the European Union. This means it is of high importance to the economy and there is a high risk to its supply. Since it is a critical element it is important for mineral exploration. In southeast Ireland, lithium deposits were discovered in the 1970s. In recent years they have been the focus of new exploration and research. 
+
+The Tellus programme does not plan to reanalyse the southeast Ireland samples for lithium. Therefore, the original analyses from 1986-1990 have been compiled for release. 
+
+The file includes the original lithium data. Lithium was analysed using the AAS technique.  Each sample has its original sample ID (“GSI_ID”) and its Tellus sample ID (“Sample_ID”). 
+
+It is a vector dataset. Vector data portray the world using points, lines, and polygons (areas). The stream sediment geochemistry data are represented as points. Each point gives information about the identity of the sample, where the sample was collected and the concentration of lithium in the sample. This includes:
+•	GSI_ID = original sample number (1986-1990)
+•	Sample_ID = Tellus sample number (2014-2015)
+•	Li_AAS = concentration of lithium in sample (ppm or mg/kg)
+
+Location information for the sample site:
+•	X_ING = Easting (Irish National Grid coordinate system)
+•	Y_ING = Northing (Irish National Grid coordinate system)
+•	X_ITM = Easting (Irish Transverse Mercator coordinate system)
+•	Y_ITM = Northing (Irish Transverse Mercator coordinate system)
+
+
+
+Credits		Contains Irish Public Sector Data (Geological Survey Ireland) licensed under a Creative Commons
+Attribution 4.0 International (CC BY 4.0) licence.
+
+Use limitations		Data that is produced directly by Geological Survey Ireland (GSI) is free for use under the conditions of Creative Commons Attribution 4.0 International license.
+https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+Under the CC-BY Licence, users must acknowledge the source of the Information in their product or application.
+Please use this specific attribution statement: "Contains Irish Public Sector Data (Geological Survey Ireland) licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) licence.”
+In cases where it is not practical to use the statement users may include a URI or hyperlink to a resource that contains the required attribution statement.
+
+Extent			West	-7.600597    
+			East	-5.997207
+			North	53.283198    
+			South	52.091657
+
+Survey start date	1986
+Survey finish date	1990
+
+Author			Tellus, Geological Survey Ireland | Tellus
+
+Publication Date	25 February 2021
+
+Contact			tellus@gsi.ie

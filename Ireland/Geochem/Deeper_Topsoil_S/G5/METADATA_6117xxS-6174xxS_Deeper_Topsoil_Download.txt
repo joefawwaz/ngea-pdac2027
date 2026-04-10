@@ -1,0 +1,104 @@
+Title		Deeper Topsoil Geochemistry North Midlands Ireland (G5) ITM 
+
+Purpose		
+The Tellus project is a survey of heavy metals, organic carbon and pH in topsoils in Ireland. Topsoil is the upper surface layer of the soil and survey measures the amount and type of chemicals in these surface soils. These chemicals can be natural or man-made. This allows us to map different soil types and learn about how they were made.
+Deeper topsoil samples were taken from the north midlands (G5), and tested for their chemical make-up. Deeper topsoil is worth testing as it is more related to deeper rock formations than shallow topsoil.
+This data will help in land-use planning, mapping of natural resources, help understand impact of farming on the environment and aid policy. Higher amounts of some chemicals in soils may also affect human and livestock health. 
+
+Version		1.1
+
+Summary		
+Soil samples were collected in block G5 (Irish North Midlands) between 2017 and 2019 and tested for the chemicals that make up the soil. Over 1000 samples were taken from areas such as meadows, fields, parks and pastures. The samples were taken using a hand auger from depth up to 0.50 m and were collected into plastic bags. The <2 mm fraction of the sample was sent to a lab to be tested for chemicals and the results were given as mg/kg (milligram per kilogram) or % (percent). Data are censored where below Lower Limit of Detection (LLD). For elements where large proportion of observations fall below the accredited LLD, non-accredited, uncensored below-LLD data are also provided (Au, B, Ta, Pd and Pt).
+It is a vector dataset. Vector data portray the world using points, lines, and polygons (areas). This soil geochemistry data is shown as points. Each point gives information about where the sample was collected, the type and value of the chemicals that were tested. This includes:
+
+• Sample_ID = Sample Number
+# Location information for the sample site:
+• Easting_ING = Easting (Irish National Grid coordinate system)
+• Northing_ING = Northing (Irish National Grid coordinate system)
+• Easting_ITM = Easting (Irish Transverse Mercator coordinate system)
+• Northing_ITM = Northing (Irish Transverse Mercator coordinate system)
+• pH_CaCl2 = pH by CaCl2 paste (pH) (units)
+• LOI_450C_% = Loss-on-ignition at 450°C (LOI) (%)
+# List of chemical elements:
+• Au_mgkg_ICPar = Gold by aqua regia with ICP finish (Au) (mg/kg)
+• Ag_mgkg_ICPar = Silver by aqua regia with ICP finish (Ag) (mg/kg)
+• Al_% = Aluminium by aqua regia with ICP finish (Al) (%)
+• As_mgkg_ICPar = Arsenic by aqua regia with ICP finish (As) (mg/kg)
+• B_mgkg_ICPar = Boron by aqua regia with ICP finish (B) (mg/kg)
+• Ba_mgkg_ICPar = Barium by aqua regia with ICP finish (Ba) (mg/kg)
+• Be_mgkg_ICPar = Beryllium by aqua regia with ICP finish (Be) (mg/kg)
+• Bi_mgkg_ICPar = Bismuth by aqua regia with ICP finish (Bi) (mg/kg)
+• Ca_mgkg_ICPar = Calcium by aqua regia with ICP finish (Ca) (mg/kg)
+• Ca_% = Calcium by aqua regia with ICP finish (Ca) (%)
+• Cd_mgkg_ICPar = Cadmium by aqua regia with ICP finish (Cd) (mg/kg)
+• Ce_mgkg_ICPar = Cerium by aqua regia with ICP finish (Ce) (mg/kg)
+• Co_mgkg_ICPar = Cobalt by aqua regia with ICP finish (Co) (mg/kg)
+• Cr_mgkg_ICPar = Chromium by aqua regia with ICP finish (Cr) (mg/kg)
+• Cs_mgkg_ICPar = Caesium by aqua regia with ICP finish (Cs) (mg/kg)
+• Cu_mgkg_ICPar = Copper by aqua regia with ICP finish (Cu) (mg/kg)
+• Fe_% = Iron by aqua regia with ICP finish (Fe) (%)
+• Ga_mgkg_ICPar = Gadolinium by aqua regia with ICP finish (Ga) (mg/kg)
+• Ge_mgkg_ICPar = Germanium by aqua regia with ICP finish (Ge) (mg/kg)
+• Hf_mgkg_ICPar = Hafnium by aqua regia with ICP finish (Hf) (mg/kg)
+• Hg_mgkg_ICPar = Mercury by aqua regia with ICP finish (Hg) (mg/kg)
+• In_mgkg_ICPar = Indium by aqua regia with ICP finish (In) (mg/kg)
+• K_% = Potassium by aqua regia with ICP finish (K) (%)
+• La_mgkg_ICPar = Lanthanum by aqua regia with ICP finish (La) (mg/kg)
+• Li_mgkg_ICPar = Lithium by aqua regia with ICP finish (Li) (mg/kg)
+• Mg_% = Magnesium by aqua regia with ICP finish (Mg) (%)
+• Mn_mgkg_ICPar = Manganese by aqua regia with ICP finish (Mn) (mg/kg)
+• Mo_mgkg_ICPar = Molybdenum by aqua regia with ICP finish (Mo) (mg/kg)
+• Na_% = Sodium by aqua regia with ICP finish (Na) (%)
+• Nb_mgkg_ICPar = Niobium by aqua regia with ICP finish (Nb) (mg/kg)
+• Ni_mgkg_ICPar = Nickel by aqua regia with ICP finish (Ni) (mg/kg)
+• P_mgkg_ICPar = Phosphorus by aqua regia with ICP finish (P) (mg/kg)
+• Pb_mgkg_ICPar = Lead by aqua regia with ICP finish (Pb) (mg/kg)
+• Pd_mgkg_ICPar = Palladium by aqua regia with ICP finish (Pd) (mg/kg)
+• Pt_mgkg_ICPar = Platinum by aqua regia with ICP finish (Pt) (mg/kg)
+• Rb_mgkg_ICPar = Rubidium by aqua regia with ICP finish (Rb) (mg/kg)
+• Re_mgkg_ICPar = Rhenium by aqua regia with ICP finish (Re) (mg/kg)
+• S_% = Sulphur by aqua regia with ICP finish (S) (mg/kg)
+• Sb_mgkg_ICPar = Antimony by aqua regia with ICP finish (Sb) (mg/kg)
+• Sc_mgkg_ICPar = Scandium by aqua regia with ICP finish (Sc) (mg/kg)
+• Se_mgkg_ICPar = Selenium by aqua regia with ICP finish (Se) (mg/kg)
+• Sn_mgkg_ICPar = Tin by aqua regia with ICP finish (Sn) (mg/kg)
+• Sr_mgkg_ICPar = Strontium by aqua regia with ICP finish (Sr) (mg/kg)
+• Ta_mgkg_ICPar = Tantalum by aqua regia with ICP finish (Ta) (mg/kg)
+• Te_mgkg_ICPar = Tellurium by aqua regia with ICP finish (Te) (mg/kg)
+• Th_mgkg_ICPar = Thorium by aqua regia with ICP finish (Th) (mg/kg)
+• Ti_% = Titanium by aqua regia with ICP finish (Ti) (%)
+• Tl_mgkg_ICPar = Thallium by aqua regia with ICP finish (Tl) (mg/kg)
+• U_mgkg_ICPar = Uranium by aqua regia with ICP finish (U) (mg/kg)
+• V_mgkg_ICPar = Vanadium by aqua regia with ICP finish (V) (mg/kg)
+• W_mgkg_ICPar = Tungsten by aqua regia with ICP finish (W) (mg/kg)
+• Y_mgkg_ICPar = Yttrium by aqua regia with ICP finish (Y) (mg/kg)
+• Zn_mgkg_ICPar = Zinc by aqua regia with ICP finish (Zn) (mg/kg)
+• Zr_mgkg_ICPar = Zirconium by aqua regia with ICP finish (Zr) (mg/kg)
+
+Credits		
+Contains Irish Public Sector Data (Geological Survey Ireland) licensed under a Creative Commons
+Attribution 4.0 International (CC BY 4.0) licence.
+
+Use limitations		
+Data that is produced directly by the Geological Survey Ireland (GSI) is free for use under the conditions of Creative Commons Attribution 4.0 International license.
+https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+Under the CC-BY Licence, users must acknowledge the source of the Information in their product or application.
+Please use this specific attribution statement: "Contains Irish Public Sector Data (Geological Survey Ireland) licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) licence.”
+In cases where it is not practical to use the statement users may include a URI or hyperlink to a resource that contains the required attribution statement.
+
+Extent		West	-9.680803
+		East	-6.001939
+		North	54.103930
+		South	53.091417
+
+Author		Tellus, Geological Survey Ireland | Tellus
+
+Survey Start Date	2017-05-03 
+Survey End Date		2019-09-26
+
+Publication Date	19 April 2021
+Revision Date		29 March 2023
+
+Contact		tellus@gsi.ie

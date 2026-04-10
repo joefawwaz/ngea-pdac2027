@@ -1,0 +1,88 @@
+Magnetics
+Definition of channels in delivered .csv file:
+
+        X:      	Grid Easting
+        Y:      	Grid northing masked to perfect
+	LAT:		WGS84 latitude in decimal degrees
+	LONG:		WGS84 longitude in decimal degrees
+	FID:		numerical sum of Julian day and seconds past previous midnight
+        Area:   	Tellus survey area
+	Flight: 	Flight number
+	DATE: 		Date (YYYYMMDD)
+	Day:		Day number (Julian)
+	Time:		Time (HHMMSS.SS)
+	DIR:		Flight direction (degrees clockwise)
+	RALT:		Radar altitude (m)
+	GPS_H:		GPS altitude (m) above geoid (WGS84)
+	DTM:		Digital Terrain Model (m)
+	MAG_MID:	Total magnetic Intensity for aircraft mid-point (nT)
+	BASE:		Magnetic basestation correction (nT)
+	GRAD_PERP:	Gradient perpendicular to aircraft (nT/m)
+	MAG_ML:		Equivilent to MAG_MID microlevelled (nT)
+	MAG_IGRF:	IGRF field (nT)
+	MAG_RES:	Magnetic anomaly (IGRF corrected MAG_ML) (nT)
+
+Definition of channels in .csv files
+
+Radiometrics
+Radiometric data
+
+	X: 	Grid Easting (m)
+	Y: 	Grid Northing (m)
+	LAT:	WGS84 latitude in decimal degrees
+	LONG:	WGS84 longitude in decimal degrees
+	FID:	numerical sum of Julian day and seconds past previous midnight
+	Flight: Flight number
+	Day:	Day number (Julian)
+	Time:	Time (HHMMSS.SS)
+	DIR:	Flight direction (degrees clockwise)
+	RALT:	Radar altitude (m)
+	BALT:	Barometric altitude (m)
+	TOUT:	External temperature (degrees C)
+	GPS_H:	GPS altitude (m) above geoid (WGS84)
+	DTM:	Digital Terrain Model (m)
+
+	D_TOT_CPS:	Total Counts (Ur units) meaning sum of all counts from 400 to 3000 keV
+	D_TOT_NGY:	Total counts (nGy/h = nanoGray per hour) expressed as air absorbed dose rate
+	D_KAL:		Potassium (%K)
+	D_URA:		Uranium (ppm, eU)
+	D_THO:		Thorium (ppm, eTh)
+
+Note: 	8 data points have been set to dummy values 	
+
+
+Electromagnetics
+Electromagnetic data (em) and Apparent Resistivity data (ap)
+
+	X: 	Grid Easting (m)
+	Y: 	Grid Northing (m)
+	LAT:	WGS84 latitude in decimal degrees
+	LONG:	WGS84 longitude in decimal degrees
+	FID:	numerical sum of Julian day and seconds past previous midnight	
+	Flight: Flight number
+	Day:	Day number (Julian)
+	Time:	Time (HHMMSS.SS)
+	DIR:	Flight direction (degrees clockwise)
+	RALT:	Radar altitude (m)
+	GPS_H:	GPS altitude (m) above geoid (WGS84)
+	DTM:	Digital Terrain Model (m)
+	PLM:	Power-line monitor (no units)
+	
+	RE3:	EM real (in-phase) component, low frequency 3125 Hz, ppm
+	IM3:	EM imaginary (quadrature) component, low frequency 3125 Hz, ppm  
+	RE14:	EM real (in-phase) component, high frequency 14368 Hz, ppm
+	IM14:	EM imaginary (quadrature) component, high frequency 14368 Hz, ppm 
+	F3ApRes: 	EM apparent resistivity, low frequency 3125 Hz, ohm.m 
+	F3Depth: 	EM apparent depth, low frequency 3125 Hz, m
+	F14ApRes: 	EM apparent resistivity, high frequency 14368 Hz, ohm.m 
+	F14Depth: 	EM apparent depth, high frequency 14368 Hz, m
+
+ 
+
+
+
+
+
+
+
+

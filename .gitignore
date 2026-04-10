@@ -1,0 +1,6 @@
+# Large geophysical CSVs - stored locally only
+Northern Ireland/1. Geophysic/EM/Electromagnetics.csv
+Northern Ireland/1. Geophysic/Magnetic/Magnetics.csv
+Northern Ireland/1. Geophysic/Radiometric/Radiometrics.csv
+# Allow samples
+!data/samples/
