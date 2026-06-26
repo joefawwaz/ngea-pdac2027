@@ -1,0 +1,20 @@
+Rank,Target_ID,Lon,Lat,Centroid_X_ITM,Centroid_Y_ITM,n_samples,Area_km2,Mean_Prospectivity,Max_Prospectivity,Mean_Prosp_NoLi,Mean_Li_mgkg,Mean_Rb_mgkg,Geological_Domain,Nearest_Known_Occurrence_km,Nearest_Occurrence_Name,Validation_Notes,Rank_Score
+1,T18,-6.1795,54.1826,718832,827489,80,1126.5,0.968,1.0,0.968,22.1,72.3,Newry-Mourne Granites,4.6,Newry_NE_margin,Within 15km of Newry_NE_margin — VALIDATES known occurrence,0.9819
+2,T10,-6.8982,52.4944,674815,638678,8,87.4,0.978,0.998,0.977,33.0,22.9,Leinster Granite Margin,5.4,COOLYHUNE,Within 15km of COOLYHUNE — VALIDATES known occurrence,0.7587
+3,T16,-6.7324,52.7019,685671,661949,7,87.9,0.974,0.989,0.966,26.8,16.8,Leinster Granite Margin,2.3,ACLARE,Within 15km of ACLARE — VALIDATES known occurrence,0.7565749999999999
+4,T09,-6.9081,52.6148,673946,652065,5,41.2,0.982,0.998,0.984,22.9,20.6,Leinster Granite Margin,5.4,SESKINNAMADRA,Within 15km of SESKINNAMADRA — VALIDATES known occurrence,0.750725
+5,T12,-6.7835,52.86,681918,679485,11,165.9,0.971,0.995,0.963,19.4,13.3,Leinster Granite Margin,16.7,MOYLISHA,Within Leinster LCT pegmatite belt. 17km from nearest known occurrence (MOYLISHA).,0.747925
+6,T11,-6.6264,52.8771,692460,681568,6,70.1,0.975,0.986,0.955,33.7,15.5,Leinster Granite Margin,12.3,STRANAKELLY,Within 15km of STRANAKELLY — VALIDATES known occurrence,0.7380500000000001
+7,T13,-6.4932,52.9445,701271,689251,5,34.3,0.98,0.993,0.964,11.0,9.7,Leinster Granite Margin,18.2,STRANAKELLY,Within Leinster LCT pegmatite belt. 18km from nearest known occurrence (STRANAKELLY).,0.729575
+8,T17,-6.5777,53.0733,695305,703466,3,28.3,0.964,0.974,0.967,11.7,11.0,Central Ireland,32.5,STRANAKELLY,Requires field validation.,0.691525
+9,T15,-6.355,53.0759,710221,704072,4,62.3,0.957,0.97,0.962,2.3,3.3,Central Ireland,34.8,STRANAKELLY,Requires field validation.,0.68775
+10,T02,-6.1965,53.2608,720324,724896,13,104.2,0.957,0.976,0.932,28.2,16.0,Central Ireland,57.8,STRANAKELLY,Requires field validation.,0.682875
+11,T14,-6.3679,52.1991,711565,606512,3,6.6,0.961,0.992,0.963,14.0,14.6,Leinster Granite Margin,53.6,COOLYHUNE,Within Leinster LCT pegmatite belt. 54km from nearest known occurrence (COOLYHUNE).,0.663325
+12,T19,-6.838,54.7148,674874,885807,4,25.8,0.961,0.984,0.959,3.6,23.7,Sperrins-Dalradian,70.7,Newry_NE_margin,"CAUTION: Dalradian metasediments, no mapped granitic intrusives. Likely reflects clay-rich protolith Li, not pegmatite. Requires field validation.",0.6388
+13,T01,-8.3376,54.972,578383,913866,13,179.2,0.982,0.996,0.963,1.8,0.9,Sperrins-Dalradian,154.6,Newry_SW_margin,"CAUTION: Dalradian metasediments, no mapped granitic intrusives. Likely reflects clay-rich protolith Li, not pegmatite. Requires field validation.",0.6333249999999999
+14,T05,-9.1352,53.2664,524268,724611,7,82.1,0.976,0.988,0.953,8.2,12.5,Western Ireland,169.3,COOLYHUNE,Requires field validation.,0.6104749999999999
+15,T03,-7.813,55.1092,611930,929103,6,70.2,0.975,0.999,0.955,0.5,1.0,Sperrins-Dalradian,141.0,Newry_SW_margin,"CAUTION: Dalradian metasediments, no mapped granitic intrusives. Likely reflects clay-rich protolith Li, not pegmatite. Requires field validation.",0.60975
+16,T07,-7.9883,54.9813,600750,914855,5,53.9,0.976,0.991,0.957,0.8,1.1,Sperrins-Dalradian,138.2,Newry_SW_margin,"CAUTION: Dalradian metasediments, no mapped granitic intrusives. Likely reflects clay-rich protolith Li, not pegmatite. Requires field validation.",0.6049749999999999
+17,T08,-9.477,53.3699,501706,736545,4,13.0,0.966,0.981,0.978,0.7,1.5,Western Ireland,194.8,COOLYHUNE,Requires field validation.,0.59585
+18,T04,-8.3591,54.7876,576900,893351,3,3.4,0.97,0.987,0.951,0.5,0.5,Sperrins-Dalradian,144.4,Newry_SW_margin,"CAUTION: Dalradian metasediments, no mapped granitic intrusives. Likely reflects clay-rich protolith Li, not pegmatite. Requires field validation.",0.595625
+19,T06,-8.4804,54.7287,569057,886848,3,8.8,0.948,0.949,0.914,2.0,2.3,Sperrins-Dalradian,148.2,Newry_SW_margin,"CAUTION: Dalradian metasediments, no mapped granitic intrusives. Likely reflects clay-rich protolith Li, not pegmatite. Requires field validation.",0.578425

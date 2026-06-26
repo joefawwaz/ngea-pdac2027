@@ -1,0 +1,24 @@
+# ============================================================
+# NGEA PDAC 2027 - .gitignore
+# Do NOT upload the Tellus source data (large/licensed) or caches.
+# ============================================================
+
+# --- Tellus source data (Republic + Northern Ireland) ---
+Ireland/
+Northern Ireland/
+
+# --- model checkpoints & pickles ---
+outputs/checkpoints/
+*.pkl
+
+# --- python / jupyter / system caches ---
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+.DS_Store
+.virtual_documents/
+
+# --- scratch ---
+*.log
+/tmp/
