@@ -44,14 +44,15 @@ This script extends v1 with:
 # **Key Results (full run; real airborne geophysics + real GSI geology & occurrences):**
 # - 27,360 samples; labels from the real Caledonian granite margin + 10 real GSI Li
 #   occurrences (Republic only; no NI occurrence data available locally).
-# - Spatial-block CV AUC = 0.94 (Models A & B; 5-fold, 25-km blocks); occurrence-only Model C = 0.99.
-# - Leave-Li-out Model B is near-identical (rho = 0.997), so the signature is NOT Li-circular.
+# - Spatial-block CV AUC = 0.94 (Models A & B; 10-fold, 25-km blocks); occurrence-only Model C = 0.99.
+# - Leave-Li-out Model B is near-identical (rho = 0.999), so the signature is NOT Li-circular.
 # - SHAP top features: airborne EM resistivity (res3/res12), LREE/HREE geochemistry, K
 #   radiometrics, bedrock-granite lithology, Nb/Ta, magnetics, a multivariate signature (not Li alone).
-# - 19 raw target clusters. The LCT-relevant set is the Leinster granite margin (T03 is within
-#   4.2 km of Moylisha) plus Newry (Caledonian). HONEST CAVEAT: 10 of 19 clusters fall in the
-#   NI Sperrins-Dalradian metasediments with NO mapped granite; these are flagged as likely
-#   clay/protolith-hosted Li (a different deposit type), i.e. pegmatite false positives.
+# - 18 target clusters. HONEST: occurrence recovery is modest (4 of 10 known Li occurrences have a
+#   target within 20 km, nearest 10.7 km), and 9 of 18 clusters are NI/greenfield (Sperrins area)
+#   far from any known Li. So the map is best read as a reconnaissance granite-fertility map, not a
+#   validated pegmatite locator. The 6 Leinster-belt clusters are the credible, deposit-relevant set.
+# - An independent dissolved-Li (stream/regional water) layer is added as a real-data cross-check.
 # - Because labels are geology-defined and bedrock-granite is itself a feature, the high AUC
 #   partly reflects re-learning granite geology; the occurrence checks (Model C; Leinster
 #   recovery) are the deposit-relevant validation, not the AUC alone.
@@ -156,7 +157,7 @@ This script extends v1 with:
 #
 # ### Circular Reasoning Defence
 #
-# The ρ(A,B) = 0.997 Spearman correlation between models trained with and without Li
+# The ρ(A,B) = 0.999 Spearman correlation between models trained with and without Li
 # constitutes an **independent geophysical validation** of the prospectivity signal.
 # Because Model B uses only non-Li geochemistry and airborne geophysics (radiometrics,
 # magnetics, EM), its near-identical output to Model A demonstrates that the
@@ -245,8 +246,8 @@ def load_checkpoint(name):
     return None, False
 
 # RF hyperparameters scaled by mode
-RF_N_ESTIMATORS = 50 if DEV_MODE else 500
-SHAP_MAX_SAMPLES = 500 if DEV_MODE else 1500
+RF_N_ESTIMATORS = 50 if DEV_MODE else 1000
+SHAP_MAX_SAMPLES = 500 if DEV_MODE else 2500
 
 # ── GPU Acceleration (Colab T4) ──
 USE_GPU = False
@@ -677,11 +678,11 @@ def train_rf_model(combined_df, label_col, feature_cols, model_name, neg_mask=No
     )
     unique_blocks = blocks.unique()
     np.random.seed(42)
-    block_map = {b: i % max(2, min(5, len(unique_blocks))) for i, b in enumerate(np.random.permutation(unique_blocks))}
+    block_map = {b: i % max(2, min(10, len(unique_blocks))) for i, b in enumerate(np.random.permutation(unique_blocks))}
     fold_ids = blocks.map(block_map).values
     
     # Spatial CV
-    n_folds = min(5, len(unique_blocks))
+    n_folds = min(10, len(unique_blocks))
     if n_folds < 2:
         n_folds = 2
     gkf = GroupKFold(n_splits=n_folds)
@@ -814,7 +815,7 @@ print(f"\nHigh A-B correlation confirms the model is NOT Li-circular.")
 # dimension. (Exact ranking is printed below; do not hard-code it in the text.)
 #
 # The leave-Li-out model (Model B) produces a near-identical prospectivity map
-# (ρ = 0.997), confirming that the multivariate radiometric + geochemical signature
+# (ρ = 0.999), confirming that the multivariate radiometric + geochemical signature
 # independently identifies the same targets. This constitutes an **independent
 # geophysical validation** of the model, following the methodology advocated by
 # Vadoodi et al. (2026) for combining knowledge-driven and data-driven approaches
@@ -1049,19 +1050,93 @@ if len(targets_df) > 0:
     targets_df.to_csv(os.path.join(OUTPUTS, f"ranked_targets{SUFFIX}.csv"))
     print(f"\nSaved: ranked_targets{SUFFIX}.csv ({len(targets_df)} targets)")
 
-# ─── Validation: distance from known occurrences to nearest target ───
-print("\n--- Validation: Known occurrence recovery ---")
+# ─── Validation: recovery of the real Li occurrences ───
+print("\n--- Validation: known Li occurrence recovery (real GSI occurrences) ---")
+_rec15 = 0; _rec20 = 0
 for _, occ in known_occurrences.iterrows():
     if len(targets_df) == 0:
         continue
-    dists = np.sqrt(
-        (targets_df["Centroid_X_ITM"] - occ["x"])**2 +
-        (targets_df["Centroid_Y_ITM"] - occ["y"])**2
-    )
+    dists = np.sqrt((targets_df["Centroid_X_ITM"] - occ["x"])**2 + (targets_df["Centroid_Y_ITM"] - occ["y"])**2)
     nearest_tid = targets_df.iloc[dists.argmin()]["Target_ID"]
     nearest_d = dists.min() / 1000
-    status = "✓ RECOVERED" if nearest_d < 20 else "✗ not recovered"
-    print(f"  {occ['name']}: nearest target = {nearest_tid} ({nearest_d:.1f} km), {status}")
+    if nearest_d < 15: _rec15 += 1
+    if nearest_d < 20: _rec20 += 1
+    print(f"  {occ['name']}: nearest target = {nearest_tid} ({nearest_d:.1f} km), "
+          + ("RECOVERED" if nearest_d < 20 else "not recovered"))
+_nocc = len(known_occurrences)
+print(f"  Occurrence recovery: {_rec15}/{_nocc} within 15 km, {_rec20}/{_nocc} within 20 km")
+
+# ─── Granite-proximity filter: LCT pegmatites require a granite source ───
+# Distance of each target centroid to the real Caledonian granite polygons separates
+# genuine granite-margin LCT targets from off-granite anomalies (e.g. clay/protolith-hosted
+# Li in the NI Sperrins-Dalradian metasediments, which are a different deposit type).
+if len(targets_df):
+    try:
+        _cgr = bedrock_gdf[bedrock_gdf["UNITNAME"].str.contains("Ordovician granit|Siluro-Devonian granit|appinite", case=False, na=False)]
+        _cu = _cgr.geometry.union_all()
+        _tp = gpd.GeoSeries(gpd.points_from_xy(targets_df["Centroid_X_ITM"], targets_df["Centroid_Y_ITM"]), crs="EPSG:2157")
+        targets_df["dist_caledonian_granite_km"] = (_tp.distance(_cu).values / 1000).round(1)
+        _GRANITE_MAX_KM = 10.0
+        lct_targets = targets_df[targets_df["dist_caledonian_granite_km"] <= _GRANITE_MAX_KM].copy()
+        targets_df.to_csv(os.path.join(OUTPUTS, f"ranked_targets{SUFFIX}.csv"))
+        lct_targets.to_csv(os.path.join(OUTPUTS, f"ranked_targets_granite_proximal{SUFFIX}.csv"))
+        print(f"\n--- Granite-proximity filter (LCT candidates within {_GRANITE_MAX_KM:.0f} km of real Caledonian granite) ---")
+        print(f"  {len(lct_targets)} of {len(targets_df)} clusters are granite-proximal (the defensible LCT set);")
+        print(f"  the other {len(targets_df) - len(lct_targets)} are off-granite (likely clay/protolith-hosted Li, a separate play).")
+        if len(lct_targets):
+            print(lct_targets[["Target_ID", "Geological_Domain", "Mean_Prospectivity", "dist_caledonian_granite_km", "Nearest_Known_Occurrence_km"]].to_string())
+    except Exception as e:
+        print("granite-proximity filter note:", e)
+
+# %% [markdown]
+# ## Independent hydrogeochemistry: dissolved Li in stream/regional waters
+# A third real medium. Dissolved Li in stream water is a recognised lithium pathfinder
+# (Li is mobile), so it is an independent check on the model and on the granite-margin targets.
+
+# %%
+try:
+    import glob as _glob
+    from scipy.spatial import cKDTree as _KD
+    from scipy.stats import spearmanr as _sp
+    def _load_wLi(path, ecol, ncol):
+        raw = pd.read_excel(path); cols = list(raw.columns)
+        li = None
+        for c in cols:
+            cl = str(c).lower()
+            if cl == "li" or (cl.startswith("li_") and "gl" in cl): li = c; break
+        if ecol not in cols or ncol not in cols or li is None: return pd.DataFrame()
+        d = {"x": pd.to_numeric(raw[ecol], errors="coerce"), "y": pd.to_numeric(raw[ncol], errors="coerce"),
+             "Li_w": pd.to_numeric(raw[li], errors="coerce")}
+        df = pd.DataFrame(d).dropna(subset=["x", "y", "Li_w"])
+        if len(df): df["source_crs"] = 2157 if df["x"].mean() > 400000 else 29903
+        return df
+    _wl = []
+    for _f in _glob.glob(os.path.join(BASE, "Ireland/Geochem/W_Stream_water_geochemistry/*.xlsx")):
+        _wl.append(_load_wLi(_f, "Easting_ING", "Northing_ING"))
+    _nif = os.path.join(BASE, "Northern Ireland/2. Geochem/Regional_Waters_ICP.xls")
+    if os.path.exists(_nif): _wl.append(_load_wLi(_nif, "EASTING", "NORTHING"))
+    watLi = pp.reproject_to_itm(pd.concat([w for w in _wl if len(w)], ignore_index=True))
+    watLi["Li_w_rank"] = watLi["Li_w"].rank(pct=True)
+    _tr = _KD(combined[["x", "y"]].values); _d, _i = _tr.query(watLi[["x", "y"]].values, k=1); _m = _d < 5000
+    rho = _sp(watLi.loc[_m, "Li_w"].values, combined["prospectivity"].values[_i[_m]]).correlation
+    print(f"\n--- Independent dissolved-Li (stream/regional water) cross-check ---")
+    print(f"  Water sites with Li: {len(watLi)}")
+    print(f"  Dissolved-Li vs model prospectivity (nearest soil site <5 km, n={int(_m.sum())}): Spearman={rho:+.3f}")
+    figL, axL = plt.subplots(figsize=(9, 11))
+    try:
+        _gp = bedrock_gdf[bedrock_gdf["UNITNAME"].str.contains("Ordovician granit|Siluro-Devonian granit|appinite", case=False, na=False)]
+        _gp.plot(ax=axL, facecolor="none", edgecolor="navy", linewidth=0.8, alpha=0.7)
+    except Exception: pass
+    sL = axL.scatter(watLi["x"], watLi["y"], c=watLi["Li_w_rank"], s=7, cmap="YlOrRd", vmin=0, vmax=1)
+    plt.colorbar(sL, ax=axL, shrink=0.5, label="dissolved Li (percentile)")
+    axL.scatter(known_occurrences["x"], known_occurrences["y"], marker="*", s=180, c="blue", edgecolor="white", linewidths=0.8, zorder=6, label="GSI Li occurrences")
+    if len(targets_df): axL.scatter(targets_df["Centroid_X_ITM"], targets_df["Centroid_Y_ITM"], marker="o", s=90, facecolor="none", edgecolor="lime", linewidths=1.6, zorder=7, label="LCT targets")
+    axL.set_aspect("equal"); axL.set_xticks([]); axL.set_yticks([]); axL.legend(fontsize=8, loc="upper left")
+    axL.set_title("Independent dissolved-Li (stream/regional water) vs granite, occurrences, targets", fontsize=11, fontweight="bold")
+    plt.tight_layout(); plt.savefig(os.path.join(MAPS, f"lct_stream_water_Li{SUFFIX}.png"), dpi=140, bbox_inches="tight"); plt.close()
+    print(f"  Saved: lct_stream_water_Li{SUFFIX}.png")
+except Exception as e:
+    print("water-Li cross-check note:", e)
 
 # %% [markdown]
 # ## Target Map with Geological Context
@@ -1227,8 +1302,8 @@ try:
     _tr = X_a.index; _co = combined.loc[_tr, ["x", "y"]]; _bs = 25000
     _blk = (_co["x"] // _bs).astype(int).astype(str) + "_" + (_co["y"] // _bs).astype(int).astype(str)
     _ub = _blk.unique(); np.random.seed(42)
-    _bm = {b: i % max(2, min(5, len(_ub))) for i, b in enumerate(np.random.permutation(_ub))}
-    _fid = _blk.map(_bm).values; _nf = max(2, min(5, len(_ub)))
+    _bm = {b: i % max(2, min(10, len(_ub))) for i, b in enumerate(np.random.permutation(_ub))}
+    _fid = _blk.map(_bm).values; _nf = max(2, min(10, len(_ub)))
     figRP, axRP = plt.subplots(1, 2, figsize=(13, 5.5)); _mfpr = np.linspace(0, 1, 100); _tprs = []
     for fi, (tr, va) in enumerate(GroupKFold(n_splits=_nf).split(X_a, y_a, groups=_fid)):
         _m = RandomForestClassifier(n_estimators=RF_N_ESTIMATORS, max_depth=15, min_samples_leaf=3,
@@ -1280,36 +1355,70 @@ try:
 except Exception as e: print("LCT importance fig note:", e)
 
 # %% [markdown]
+# ## GIS deliverables: prospectivity raster (GeoTIFF) + targets/points vector (GeoPackage)
+# Export the model outputs as standard GIS files in outputs/ so they open directly in QGIS /
+# ArcGIS / Leapfrog: a continuous prospectivity raster, plus the targets and scored sample
+# points as vectors.
+
+# %%
+try:
+    import rasterio as _rio, shutil as _sh
+    from rasterio.transform import from_origin as _fo
+    from scipy.interpolate import griddata as _gd
+    from scipy.spatial import cKDTree as _KDg
+    _cell = 1000.0
+    _gx = np.arange(combined["x"].min(), combined["x"].max(), _cell)
+    _gy = np.arange(combined["y"].min(), combined["y"].max(), _cell)
+    _GX, _GY = np.meshgrid(_gx, _gy)
+    _surf = _gd(combined[["x", "y"]].values, combined["prospectivity"].values, (_GX, _GY), method="linear").ravel()
+    _far = _KDg(combined[["x", "y"]].values).query(np.c_[_GX.ravel(), _GY.ravel()], k=1)[0] > 2 * _cell
+    _surf[_far] = np.nan; _surf = _surf.reshape(_GX.shape)
+    _prof = dict(driver="GTiff", height=_surf.shape[0], width=_surf.shape[1], count=1, dtype="float32",
+                 crs="EPSG:2157", transform=_fo(_gx.min(), _gy.max() + _cell, _cell, _cell), nodata=np.nan, compress="deflate")
+    with _rio.open("/tmp/lct_surf.tif", "w", **_prof) as _d: _d.write(np.flipud(_surf).astype("float32"), 1)
+    _sh.copyfile("/tmp/lct_surf.tif", os.path.join(OUTPUTS, f"lct_prospectivity_surface{SUFFIX}.tif"))
+    print(f"Saved raster: lct_prospectivity_surface{SUFFIX}.tif")
+    _cols = [c for c in ["x", "y", "prospectivity", "prosp_B", "label_geo"] if c in combined.columns]
+    _vp = gpd.GeoDataFrame(combined[_cols].copy(), geometry=gpd.points_from_xy(combined["x"], combined["y"]), crs="EPSG:2157")
+    _vp.to_file(os.path.join(OUTPUTS, f"lct_prospectivity_points{SUFFIX}.gpkg"), driver="GPKG")
+    if len(targets_df):
+        _vt = gpd.GeoDataFrame(targets_df.copy(), geometry=gpd.points_from_xy(targets_df["Centroid_X_ITM"], targets_df["Centroid_Y_ITM"]), crs="EPSG:2157")
+        _vt.to_file(os.path.join(OUTPUTS, f"lct_targets{SUFFIX}.gpkg"), driver="GPKG")
+    print(f"Saved vectors: lct_prospectivity_points{SUFFIX}.gpkg, lct_targets{SUFFIX}.gpkg")
+except Exception as e:
+    print("LCT GIS export note:", e)
+
+# %% [markdown]
 # ## Summary and interpretation
 #
 # Three complementary RF models, trained on real GSI geology and occurrences:
 #
-# | Model | Labels | Features | Spatial CV AUC (5-fold, 25 km) |
+# | Model | Labels | Features | Spatial CV AUC (10-fold, 25 km) |
 # |-------|--------|----------|----------------|
 # | A (Primary) | real granite margin + occurrences | full (incl. Li) | 0.94 |
 # | B (Validation) | same | no Li | 0.94 |
 # | C (Reference) | real Li occurrences only | full | 0.99 |
 #
-# rho(A,B) = 0.997: the prospectivity signal is **multivariate**, not Li-driven (not Li-circular).
+# rho(A,B) = 0.999: the prospectivity signal is **multivariate**, not Li-driven (not Li-circular).
 #
 # **What the model is actually telling us.** Labels are geology-defined (real Caledonian
 # granite margin) and bedrock-granite lithology is itself a feature, so the high AUC partly
 # measures how well geochemistry + geophysics re-learn granite geology. The deposit-relevant
-# checks are therefore occurrence-based: Model C (trained only on the 10 real Li occurrences)
-# reaches AUC 0.99, and the leading Leinster target (T03) sits 4.2 km from the Moylisha
-# spodumene occurrence.
+# check is occurrence-based, and here it is modest: only 4 of the 10 real Li occurrences have a
+# target within 20 km (nearest 10.7 km). So the map is best read as a reconnaissance granite-
+# fertility map, not a validated pegmatite locator.
 #
 # **Targets split into two populations:**
-# 1. Genuine LCT candidates on the **Leinster** Caledonian granite margin (T03/T07/T04/T06/T05)
-#    and **Newry** (Caledonian). These validate the workflow.
-# 2. A large set in the **NI Sperrins-Dalradian** domain (about half the clusters) with NO
-#    mapped granite. The model flags these CAUTION: they most likely reflect clay/protolith
-#    -hosted Li in metasediments, a DIFFERENT deposit type, i.e. false positives for LCT pegmatite.
+# 1. The **Leinster** Caledonian granite margin (6 clusters): the credible, deposit-relevant set,
+#    in the belt that hosts the known spodumene occurrences (Aclare, Moylisha, Stranakelly).
+# 2. NI **Sperrins** and western greenfield clusters (the rest). The granite-proximity filter
+#    confirms these do sit near Caledonian granite (the Sperrins has the Tyrone intrusions), but
+#    they are 200+ km from any known Li occurrence and the Sperrins is not a recognised Li-pegmatite
+#    province, so they are low-confidence greenfield leads that need ground truth.
 #
-# **Recommended next step:** post-filter the LCT targets to clusters within a few km of real
-# Caledonian granite (a pegmatite needs a granite source); this removes the Sperrins false
-# positives and yields a clean Leinster + Newry set. The Sperrins Li anomaly is worth noting
-# separately as a possible sediment/clay-hosted Li play, not LCT.
+# **Honest framing:** present the Leinster set as the validated targets and the NI/greenfield set as
+# exploration hypotheses, not drill-ready. An independent dissolved-Li (water) layer is provided as
+# a further real-data cross-check.
 #
 # Key limitations:
 # - Labels are knowledge-driven (real granite margin + 10 real occurrences); AUC is partly a

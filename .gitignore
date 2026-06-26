@@ -19,6 +19,10 @@ __pycache__/
 .DS_Store
 .virtual_documents/
 
+# --- office temp / lock files ---
+~$*
+*.tmp
+
 # --- scratch ---
 *.log
 /tmp/

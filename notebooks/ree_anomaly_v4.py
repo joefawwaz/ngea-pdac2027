@@ -328,8 +328,8 @@ occ_rank = site_rank[nn]
 print(f"Independent REE-affinity occurrences (soil site <5km): {len(occ)}")
 for fr in [0.05, 0.10, 0.20]:
     cap = (occ_rank <= fr).mean(); print(f"   top {int(fr*100):2d}% favourability captures {cap*100:4.0f}% of occurrences (lift x{cap/fr:.1f})")
-rng = np.random.default_rng(0); obs = (occ_rank <= 0.10).mean(); nsite = len(A); null = np.empty(5000)
-for i in range(5000):
+rng = np.random.default_rng(0); obs = (occ_rank <= 0.10).mean(); nsite = len(A); null = np.empty(10000)
+for i in range(10000):
     null[i] = ((rng.permutation(nsite) / nsite)[nn] <= 0.10).mean()
 pval = (null >= obs).mean()
 print(f"   permutation null top-10%: observed={obs*100:.0f}%, null≈{null.mean()*100:.0f}%, p={pval:.4f}")
@@ -378,6 +378,57 @@ ax[0].set_aspect("equal"); ax[0].set_xticks([]); ax[0].set_yticks([]); ax[0].set
 ax[1].scatter(both["soil"], both["stream"], s=8, alpha=0.4); ax[1].plot([0, 1], [0, 1], "k--", lw=.7)
 ax[1].set_xlabel("soil REE anomaly (5 km cell median)"); ax[1].set_ylabel("stream REE anomaly"); ax[1].set_title(f"Soil vs stream agreement (rho={rho_ss:+.2f})", fontsize=10, fontweight="bold")
 plt.tight_layout(); plt.savefig(os.path.join(MAPS, "ree_v4_streamsed.png"), dpi=140, bbox_inches="tight"); plt.close(); display(Image(filename=os.path.join(MAPS, "ree_v4_streamsed.png")))
+
+# %% [markdown]
+# ## 7c. Independent medium: stream/regional WATERS (dissolved REE)
+# A third real geochemical medium, hydrogeochemistry: dissolved REE in ROI Tellus stream
+# water and NI regional waters. Dissolved REE is low and strongly pH-controlled, so this is
+# a conservative independent cross-check, not a primary medium. Weak agreement with the soil
+# anomaly would reinforce that the soil signal is a solid-phase regolith feature.
+
+# %%
+try:
+    def _load_water(path, ecol, ncol, elems):
+        raw = pd.read_excel(path); cols = list(raw.columns)
+        def fw(std):
+            if std.upper() in cols: return std.upper()
+            for c in cols:
+                cl = str(c).lower()
+                if cl == std.lower(): return c
+                if cl.startswith(std.lower() + "_") and "gl" in cl: return c
+            return None
+        if ecol not in cols or ncol not in cols: return pd.DataFrame()
+        d = {"x": pd.to_numeric(raw[ecol], errors="coerce"), "y": pd.to_numeric(raw[ncol], errors="coerce")}
+        for e in elems:
+            c = fw(e)
+            if c is not None: d[e] = pd.to_numeric(raw[c], errors="coerce")
+        df = pd.DataFrame(d).dropna(subset=["x", "y"])
+        if len(df): df["source_crs"] = 2157 if df["x"].mean() > 400000 else 29903
+        return df
+    _wl = []
+    for _f in glob.glob(os.path.join(BASE, "Ireland/Geochem/W_Stream_water_geochemistry/*.xlsx")):
+        _wl.append(_load_water(_f, "Easting_ING", "Northing_ING", ["La", "Ce", "Nd", "Y", "Yb"]))
+    _nif = os.path.join(BASE, "Northern Ireland/2. Geochem/Regional_Waters_ICP.xls")
+    if os.path.exists(_nif): _wl.append(_load_water(_nif, "EASTING", "NORTHING", ["La", "Ce", "Nd", "Y"]))
+    wat = pp.reproject_to_itm(pd.concat([w for w in _wl if len(w)], ignore_index=True))
+    wree = [e for e in ["La", "Ce", "Nd", "Y", "Yb"] if e in wat.columns and wat[e].notna().mean() > 0.3]
+    wat = wat[wat[wree].notna().any(axis=1)].reset_index(drop=True)
+    wat["REE_anom"] = pd.DataFrame({e: wat[e].rank(pct=True) for e in wree}).mean(axis=1)
+    print(f"Stream/regional water sites: {len(wat)}; dissolved REE elements used: {wree}")
+    cw = lambda df: (np.floor(df["x"] / 5000).astype(int).astype(str) + "_" + np.floor(df["y"] / 5000).astype(int).astype(str))
+    gso = A.assign(c=cw(A)).groupby("c")["REE_anom"].median(); gwa = wat.assign(c=cw(wat)).groupby("c")["REE_anom"].median()
+    bw = pd.concat([gso.rename("soil"), gwa.rename("water")], axis=1).dropna()
+    rho_w = spearmanr(bw["soil"], bw["water"]).correlation if len(bw) > 10 else float("nan")
+    print(f"Soil vs water agreement on 5 km cells (n={len(bw)}): Spearman={rho_w:+.3f}")
+    print("   dissolved REE is pH-controlled and low; weak agreement is expected and reinforces a solid-phase regolith origin for the soil anomaly.")
+    figw, axw = plt.subplots(1, 2, figsize=(13, 6))
+    sw = axw[0].scatter(wat["x"], wat["y"], c=wat["REE_anom"], s=5, cmap="viridis", vmin=0, vmax=1); plt.colorbar(sw, ax=axw[0], shrink=0.5)
+    axw[0].set_aspect("equal"); axw[0].set_xticks([]); axw[0].set_yticks([]); axw[0].set_title("Dissolved REE in stream/regional water", fontsize=10, fontweight="bold")
+    axw[1].scatter(bw["soil"], bw["water"], s=8, alpha=0.4); axw[1].plot([0, 1], [0, 1], "k--", lw=.6)
+    axw[1].set_xlabel("soil REE anomaly (5 km cell)"); axw[1].set_ylabel("water REE anomaly"); axw[1].set_title(f"Soil vs water (rho={rho_w:+.2f})", fontsize=10, fontweight="bold")
+    plt.tight_layout(); plt.savefig(os.path.join(MAPS, "ree_v4_water.png"), dpi=140, bbox_inches="tight"); plt.close(); display(Image(filename=os.path.join(MAPS, "ree_v4_water.png")))
+except Exception as e:
+    print("water cross-check note:", e)
 
 # %% [markdown]
 # ## 8. Targets (multi-host) + continuous favourability raster (GeoTIFF)
@@ -491,6 +542,24 @@ plt.tight_layout(); plt.savefig(os.path.join(MAPS, "ree_v4_validation.png"), dpi
 
 A[["x", "y", "region", "horizon", "host", "REE_anom", "F_LREE", "F_HREE", "F_HFSE", "favourability"]].to_csv(os.path.join(OUT, "ree_v4_scores.csv"), index=False)
 print("Saved: ree_v4_scores.csv, ree_v4_targets.csv, ree_v4_favourability_surface.tif, maps/ree_v4_*.png")
+
+# %% [markdown]
+# ## GIS deliverables: scored points and targets as vector (GeoPackage)
+# The continuous favourability is already exported as a GeoTIFF raster
+# (ree_v4_favourability_surface.tif). Here we also export the scored sample points and the
+# ranked targets as GeoPackage vectors, so the whole result opens directly in QGIS / ArcGIS.
+
+# %%
+try:
+    _vp = gpd.GeoDataFrame(A[["x", "y", "REE_anom", "favourability", "F_LREE", "F_HREE", "F_HFSE", "host", "region"]].copy(),
+                           geometry=gpd.points_from_xy(A["x"], A["y"]), crs="EPSG:2157")
+    _vp.to_file(os.path.join(OUT, "ree_v4_points.gpkg"), driver="GPKG")
+    if len(tdf):
+        _vt = gpd.GeoDataFrame(tdf.copy(), geometry=gpd.points_from_xy(tdf["x"], tdf["y"]), crs="EPSG:2157")
+        _vt.to_file(os.path.join(OUT, "ree_v4_targets.gpkg"), driver="GPKG")
+    print("Saved vectors: ree_v4_points.gpkg, ree_v4_targets.gpkg")
+except Exception as e:
+    print("REE GIS vector export note:", e)
 
 # %% [markdown]
 # ## 9b. Integrated visualizations (data integration, multivariate structure, target scorecards)
@@ -615,6 +684,10 @@ except Exception as e: print("radar fig note:", e)
 #   reinforcing that the soil anomaly is a *regolith* feature. Stream sediments capture ~6% of
 #   occurrences in their top-10% (vs soil ~4%, residual ~15%) and are marginally granite-associated, 
 #   a useful complementary reconnaissance layer (mirrors the GSI Tellus Mourne critical-metals workflow).
+# * **A third independent medium, dissolved REE in stream/regional waters, is even more decoupled**
+#   (soil-to-water 5 km-cell rho about -0.06 across ~12,700 water sites): dissolved REE is low and
+#   pH-controlled, so its independence from the soil anomaly further confirms the soil signal is a
+#   solid-phase (clay/regolith) feature, not a dissolved/hydromorphic one.
 # * **Style discrimination:** La/Yb (median ≈10, P90≈19) is mostly LREE-dominated, isolating
 #   localised high-La/Yb (carbonatite/alkaline-affinity) provinces from HREE (ion-adsorption) areas.
 # * **Targets are multi-host and island-wide** (clay-rich shale/metasediment regolith), *not*

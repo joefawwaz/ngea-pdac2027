@@ -21,10 +21,10 @@ The EU and Ireland classify REE and Li as strategic raw materials, yet Ireland's
 - *Data-quality control:* at co-located NI sites, near-total XRF reports **Zr ×90, Nb ×23, Yb ×4.6** more than aqua regia, so all REE work uses near-total (the partial leach misses zircon/monazite-hosted REE).
 
 ## 3. Lithium (LCT), validated supervised model
-- Geology-driven labels from the **real Caledonian granite margin** (GSI 1:1M polygons; Palaeogene A-type excluded) + **real GSI Li occurrence anchors** (Republic of Ireland; no NI occurrence data available), Random Forest, **25-km spatial-block cross-validation (5-fold)**. *(Result figures below are refreshed after the next run.)*
-- **Spatial-CV AUC ≈ 0.86** (Model A full / B no-Li); ρ(A,B) = **0.995** (Li is *not* the sole driver, multivariate signature is robust).
-- **11/13 known occurrences recovered**; SHAP top features are real geophysics + bedrock + geochemistry (EM resistivity, bedrock-granite, K/Th radiometrics, LREE/HREE).
-- **11 ranked targets**, led by the Newry-Mourne and Leinster granite margins (validating Aclare/Moylisha/Knockeen). *Fig: `outputs/maps/target_map_v2.png`, `outputs/maps/shap_model_A.png`.*
+- Geology-driven labels from the **real Caledonian granite margin** (GSI 1:1M polygons; Palaeogene A-type excluded) + **real GSI Li occurrence anchors** (Republic of Ireland; no NI occurrence data available), Random Forest, **25-km spatial-block cross-validation (10-fold)**.
+- **Spatial-CV AUC ≈ 0.94** (Model A full / B no-Li); ρ(A,B) = **0.999** (Li is *not* the sole driver, multivariate signature is robust). Occurrence-only Model C ≈ 0.99.
+- **Occurrence recovery is modest** (4 of 10 known Li occurrences within 20 km, nearest 10.7 km), so the map is a reconnaissance granite-fertility map, not a validated pegmatite locator. SHAP top features are real geophysics + bedrock + geochemistry (EM resistivity, LREE/HREE, K radiometrics, bedrock-granite).
+- **18 target clusters**: the **6 Leinster-belt clusters** are the credible, deposit-relevant set (the belt that hosts Aclare/Moylisha/Stranakelly); the rest are NI/greenfield leads near Caledonian granite but far from any known Li, presented as hypotheses. An independent dissolved-Li (water) layer corroborates. *Fig: `outputs/maps/target_map_v2.png`, `outputs/maps/shap_model_A.png`, `outputs/maps/lct_stream_water_Li.png`.*
 
 ## 4. Rare earths (REE), label-free frontier assessment (`ree_anomaly_v4.ipynb`)
 - **Unsupervised** multi-element enrichment index (per-survey ranks; near-total), CLR + PCA **factor maps** (LREE-Th / HREE-Y / HFSE), Concentration-Area fractal thresholds, and a **data-driven weights-of-evidence favourability** (no assumed host). *Fig: `outputs/maps/ree_v4_maps.png`.*

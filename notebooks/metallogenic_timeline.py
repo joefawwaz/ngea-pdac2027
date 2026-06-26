@@ -39,12 +39,12 @@ def event(age, color, title, lines, side):
     for k, ln in enumerate(lines):
         ax.text(age, 8.25 - k * 0.62, ln, ha="center", va="top", fontsize=8.3, color=INK, zorder=5)
 
-event(412, CLAY, "Lithium  (LCT pegmatites)",
-      ["Caledonian orogeny, Iapetus closure", "S-type Leinster granite, about 412 Ma",
+event(405, CLAY, "Lithium  (LCT pegmatites)",
+      ["Caledonian orogeny, Iapetus closure", "S-type Leinster granite, about 405 Ma",
        "orogenic, fertile for Li, Sn, Ta", "modelled SUPERVISED (real occurrences)"], "up")
-event(58, OLIVE, "Rare earths  (NYF system)",
-      ["Palaeogene British-Irish igneous province", "A-type Mourne and Carlingford, about 60 Ma",
-       "anorogenic, fertile for REE, Nb, Zr", "modelled LABEL-FREE (no deposit yet)"], "up")
+event(56, OLIVE, "Rare earths  (NYF system)",
+      ["Palaeogene British-Irish igneous province", "Mourne about 56 Ma, Carlingford about 61 Ma",
+       "anorogenic, within-plate (A-type affinity)", "modelled LABEL-FREE (no deposit yet)"], "up")
 
 # Caledonian context bracket
 ax.annotate("", xy=(400, 3.0), xytext=(470, 3.0))
